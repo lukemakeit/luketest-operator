@@ -162,12 +162,26 @@ func (r *ReconcileAppService) Reconcile(request reconcile.Request) (reconcile.Re
 			reqLogger.Error(err, "client.Get old service fail")
 			return reconcile.Result{}, err
 		}
-		oldService.Spec = newService.Spec
-		if err = r.client.Update(context.TODO(), oldService); err != nil {
-			reqLogger.Error(err, "client.Update service fail")
-			return reconcile.Result{}, err
+		isSvrUpdate := false
+		if !reflect.DeepEqual(oldService.Spec.Type, newService.Spec.Type) {
+			oldService.Spec.Type = newService.Spec.Type
+			isSvrUpdate = true
 		}
-		reqLogger.Info(fmt.Sprintf("Update service success"))
+		if !reflect.DeepEqual(oldService.Spec.Ports, newService.Spec.Ports) {
+			oldService.Spec.Ports = newService.Spec.Ports
+			isSvrUpdate = true
+		}
+		if !reflect.DeepEqual(oldService.Spec.Selector, newService.Spec.Selector) {
+			oldService.Spec.Selector = newService.Spec.Selector
+			isSvrUpdate = true
+		}
+		if isSvrUpdate == true {
+			if err = r.client.Update(context.TODO(), oldService); err != nil {
+				reqLogger.Error(err, "client.Update service fail")
+				return reconcile.Result{}, err
+			}
+			reqLogger.Info(fmt.Sprintf("Update service success"))
+		}
 
 		return reconcile.Result{}, err
 	}

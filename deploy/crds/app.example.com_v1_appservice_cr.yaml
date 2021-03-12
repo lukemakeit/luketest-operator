@@ -1,7 +1,12 @@
 apiVersion: app.example.com/v1
 kind: AppService
 metadata:
-  name: example-appservice
+  name: nginx-app
 spec:
   # Add fields here
-  size: 3
+  size: 1
+  image: nginx:1.7.9
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30002
