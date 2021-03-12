@@ -19,7 +19,7 @@ spec:
           image: ccr.ccs.tencentyun.com/lukexwang/luketest-operator:latest 
           command:
           - luketest-operaotr
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
